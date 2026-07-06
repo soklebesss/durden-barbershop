@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CUTTHROAT BARBER CLUB
 
 > STAY SHARP OR STAY HOME.
@@ -44,3 +45,6 @@ Every "photo" is a seeded SVG editorial placeholder (`components/site/editorial-
 ## Content
 
 All copy, names, addresses, and phone numbers are fictional. The booking form sends nothing anywhere. Legal pages are templates — have them reviewed before real-world use.
+=======
+# Durden-barbershop
+>>>>>>> f5f5e0a393631941d2bef13461fe305c7af56a41
