@@ -1,0 +1,516 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   DURDEN BARBERSHOP — Design Tokens
+   Three layers: primitive → semantic → component.
+   Components must reference semantic/component tokens, never primitives.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------
+     LAYER 1 — PRIMITIVES (raw values, never used directly in components)
+     ------------------------------------------------------------------ */
+  /* color */
+  --ct-black-950: #0a0a0a; /* asphalt */
+  --ct-black-900: #111111;
+  --ct-gray-850: #161616;  /* concrete */
+  --ct-gray-800: #1d1d1d;
+  --ct-gray-700: #262626;  /* steel */
+  --ct-gray-500: #4a4a4a;
+  --ct-gray-400: #8a8a8a;  /* smoke */
+  --ct-bone-100: #f2f0eb;  /* bone */
+  --ct-bone-200: #e5e2da;
+  /* ponytail: monochrome accent ramp — the "hazard" accent is now pure white on
+     dark surfaces (500/600) and asphalt ink on light surfaces (700). No hue. */
+  --ct-orange-500: #ffffff; /* accent — punch on dark */
+  --ct-orange-600: #cfcfcf; /* accent pressed/dim */
+  --ct-orange-700: #0a0a0a; /* accent ink — legible on bone/light surfaces */
+
+  /* type scale */
+  --ct-text-display-xl: clamp(4rem, 12vw, 13rem);
+  --ct-text-display-lg: clamp(3rem, 8vw, 8rem);
+  --ct-text-display-md: clamp(2rem, 5vw, 4.5rem);
+  --ct-text-display-sm: clamp(1.5rem, 3vw, 2.5rem);
+  --ct-text-body-lg: 1.25rem;
+  --ct-text-body: 1rem;
+  --ct-text-body-sm: 0.875rem;
+  --ct-text-label: 0.8125rem;
+
+  /* tracking */
+  --ct-tracking-display: -0.02em;
+  --ct-tracking-label: 0.08em;
+
+  /* spacing (4px base) */
+  --ct-space-1: 0.25rem;
+  --ct-space-2: 0.5rem;
+  --ct-space-3: 0.75rem;
+  --ct-space-4: 1rem;
+  --ct-space-6: 1.5rem;
+  --ct-space-8: 2rem;
+  --ct-space-12: 3rem;
+  --ct-space-16: 4rem;
+  --ct-space-24: 6rem;
+  --ct-space-32: 8rem;
+  --ct-section-y: clamp(4rem, 10vh, 8rem);
+  --ct-gutter: clamp(1rem, 4vw, 4rem);
+
+  /* radius — sharp geometry */
+  --ct-radius-none: 0px;
+  --ct-radius-hairline: 2px;
+
+  /* motion primitives */
+  --ct-dur-micro: 150ms;
+  --ct-dur-standard: 300ms;
+  --ct-dur-reveal: 600ms;
+  --ct-dur-intro: 900ms;
+  --ct-ease-blade: cubic-bezier(0.83, 0, 0.17, 1);
+  --ct-ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ------------------------------------------------------------------
+     LAYER 2 — SEMANTIC (purpose aliases; dark-first)
+     ------------------------------------------------------------------ */
+  --bg: var(--ct-black-950);
+  --bg-raised: var(--ct-gray-850);
+  --bg-overlay: rgba(10, 10, 10, 0.88);
+  --bg-inverted: var(--ct-bone-100);
+
+  --fg: var(--ct-bone-100);
+  --fg-muted: var(--ct-gray-400);
+  --fg-inverted: var(--ct-black-950);
+
+  --border: oklch(0.922 0 0);
+  --border-strong: var(--ct-gray-500);
+  --border-inverted: rgba(10, 10, 10, 0.25);
+
+  --accent: oklch(0.97 0 0);
+  --accent-pressed: var(--ct-orange-600);
+  --accent-ink: var(--ct-orange-700); /* accent for text on inverted (bone) surfaces */
+  --on-accent: var(--ct-black-950);
+
+  --danger: var(--ct-orange-500); /* one accent: danger IS hazard */
+  --focus-ring: var(--ct-orange-500);
+
+  /* ------------------------------------------------------------------
+     LAYER 3 — COMPONENT
+     ------------------------------------------------------------------ */
+  --btn-primary-bg: var(--accent);
+  --btn-primary-fg: var(--on-accent);
+  --btn-primary-bg-active: var(--accent-pressed);
+  --btn-ghost-fg: var(--fg);
+  --btn-ghost-border: var(--border-strong);
+
+  --input-bg: var(--ct-black-900);
+  --input-border: var(--border);
+  --input-border-focus: var(--accent);
+  --input-fg: var(--fg);
+  --input-placeholder: var(--ct-gray-500);
+
+  --card-bg: var(--bg-raised);
+  --card-border: var(--border);
+
+  --nav-bg: rgba(10, 10, 10, 0.82);
+  --ticker-bg: var(--accent);
+  --ticker-fg: var(--on-accent);
+
+  --tape-bg: var(--ct-bone-100);
+  --tape-fg: var(--ct-black-950);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+/* Tailwind v4 theme mapping — utilities read from semantic tokens */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-inverted: var(--bg-inverted);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-inverted: var(--fg-inverted);
+  --color-border-default: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-pressed: var(--accent-pressed);
+  --color-accent-ink: var(--accent-ink);
+  --color-on-accent: var(--on-accent);
+  --color-smoke: var(--ct-gray-400);
+  --color-steel: var(--ct-gray-700);
+  --color-concrete: var(--ct-gray-850);
+  --color-bone: var(--ct-bone-100);
+
+  --font-display: var(--font-anton), "Arial Narrow", sans-serif;
+  --font-body: var(--font-grotesk), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --text-display-xl: var(--ct-text-display-xl);
+  --text-display-xl--line-height: 0.9;
+  --text-display-lg: var(--ct-text-display-lg);
+  --text-display-lg--line-height: 0.92;
+  --text-display-md: var(--ct-text-display-md);
+  --text-display-md--line-height: 0.95;
+  --text-display-sm: var(--ct-text-display-sm);
+  --text-display-sm--line-height: 1;
+  --text-label: var(--ct-text-label);
+  --text-label--line-height: 1.4;
+
+  --radius-none: var(--ct-radius-none);
+  --radius-hairline: var(--ct-radius-hairline);
+
+  --ease-blade: var(--ct-ease-blade);
+  --ease-snap: var(--ct-ease-snap);
+
+  --animate-accordion-down: accordion-down 0.3s var(--ct-ease-snap);
+  --animate-accordion-up: accordion-up 0.3s var(--ct-ease-snap);
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6)
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem; /* sticky nav + ticker */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--ct-text-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Focus — visible, on-brand, never removed */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Utility classes tied to the system */
+.font-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: var(--ct-tracking-display);
+}
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: var(--ct-text-label);
+  text-transform: uppercase;
+  letter-spacing: var(--ct-tracking-label);
+}
+
+.section-pad {
+  padding-block: var(--ct-section-y);
+}
+
+.gutter {
+  padding-inline: var(--ct-gutter);
+}
+
+/* Film grain overlay — fixed, subtle, sits above everything */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 70; /* z ladder: nav 40 · modal 50 · consent 60 · grain 70 · cursor 80 · intro 90 · skip 100 */
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .grain::after {
+    animation: grain-shift 0.9s steps(4) infinite;
+  }
+}
+
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 1%); }
+  50% { transform: translate(1%, -2%); }
+  75% { transform: translate(-1%, 2%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Halftone dot texture */
+.halftone {
+  background-image: radial-gradient(currentColor 1px, transparent 1.5px);
+  background-size: 12px 12px;
+}
+
+/* Hazard stripe divider */
+.hazard-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--accent),
+    var(--accent) 14px,
+    var(--bg) 14px,
+    var(--bg) 28px
+  );
+}
+
+/* Gaffer tape strip */
+.tape {
+  background: var(--tape-bg);
+  color: var(--tape-fg);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+}
+
+.tape-ink {
+  background: var(--ct-black-950);
+  color: var(--ct-bone-100);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 24s) linear infinite;
+}
+
+.marquee-track:hover,
+.marquee-paused .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Reduced motion: stop the loop, drop the seamless-loop duplicate, and let
+   the row scroll by hand instead so no content is unreachable. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  .marquee {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  .marquee-dup {
+    display: none;
+  }
+}
+
+/* Custom cursor — fine pointers only; base cursor stays for accessibility */
+@media (pointer: fine) {
+  .cursor-dot,
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 80;
+    border-radius: 50%;
+  }
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+  }
+  .cursor-ring {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--accent);
+    opacity: 0.5;
+  }
+}
+
+/* Scroll reveals — CSS-driven so content never depends on a JS animation
+   frame to become visible. The hidden state exists ONLY under
+   no-preference; reduced-motion users (and no-JS readers, and print) get
+   everything visible from the first paint. JS just adds .is-in. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    --reveal-delay: 0ms;
+  }
+  .reveal-wipe {
+    clip-path: inset(100% 0% 0% 0%);
+    transform: translateY(24px);
+  }
+  .reveal-wipe-right {
+    clip-path: inset(0% 100% 0% 0%);
+  }
+  .reveal-slide {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  .reveal-fade {
+    opacity: 0;
+  }
+  .reveal.is-in {
+    clip-path: inset(0% 0% 0% 0%);
+    opacity: 1;
+    transform: none;
+    transition:
+      clip-path var(--ct-dur-reveal) var(--ct-ease-blade) var(--reveal-delay),
+      transform var(--ct-dur-reveal) var(--ct-ease-blade) var(--reveal-delay),
+      opacity var(--ct-dur-standard) var(--ct-ease-snap) var(--reveal-delay);
+  }
+  .reveal-slide.is-in,
+  .reveal-fade.is-in {
+    transition-duration: var(--ct-dur-standard);
+    transition-timing-function: var(--ct-ease-snap);
+  }
+}
+
+/* Duotone image treatment — grimy editorial default, hazard on hover */
+.img-duotone {
+  filter: grayscale(1) contrast(1.15) brightness(0.9);
+  transition: filter var(--ct-dur-standard) var(--ct-ease-snap);
+}
+
+.group:hover .img-duotone,
+.img-duotone:hover {
+  filter: grayscale(1) contrast(1.25) brightness(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .img-duotone {
+    transition: none;
+  }
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
