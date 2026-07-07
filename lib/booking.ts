@@ -88,6 +88,9 @@ const MESSAGES: Record<string, string> = {
   past: "That time has already passed — choose a later slot.",
   barber: "That barber isn't available. Refresh and try again.",
   duration: "Something's off with the service length. Try again.",
+  too_far: "That date's too far ahead — pick a sooner day.",
+  limit: "You already have several upcoming bookings on this email.",
+  rate: "Too many booking attempts — please wait a bit and try again.",
 };
 
 export async function createBooking(input: BookingInput): Promise<{ id: string }> {

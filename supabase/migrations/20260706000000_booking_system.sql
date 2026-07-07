@@ -78,6 +78,7 @@ as $$
 declare
   v_duration int;
   v_end      timestamptz;
+  v_email    text := lower(btrim(p_customer_email));
   v_row      public.appointments;
 begin
   -- Resolve duration: explicit arg → service's duration → 30 min default.
@@ -97,8 +98,27 @@ begin
     raise exception 'Cannot book a time in the past' using errcode = 'P0001', hint = 'past';
   end if;
 
+  -- Booking window: nothing more than 90 days out.
+  if p_start_time > now() + interval '90 days' then
+    raise exception 'That date is too far ahead' using errcode = 'P0001', hint = 'too_far';
+  end if;
+
   if not exists (select 1 from public.barbers where id = p_barber_id and active) then
     raise exception 'Unknown or inactive barber' using errcode = 'P0001', hint = 'barber';
+  end if;
+
+  -- Anti-abuse (email-scoped; a real wall needs a CAPTCHA/IP limit at the edge):
+  -- cap concurrent upcoming bookings and rapid repeat attempts per email.
+  if (select count(*) from public.appointments
+        where customer_email = v_email and start_time > now()) >= 3 then
+    raise exception 'Too many upcoming bookings on this email'
+      using errcode = 'P0001', hint = 'limit';
+  end if;
+
+  if (select count(*) from public.appointments
+        where customer_email = v_email and created_at > now() - interval '1 hour') >= 5 then
+    raise exception 'Too many booking attempts — try again later'
+      using errcode = 'P0001', hint = 'rate';
   end if;
 
   -- Attempt the insert. If a concurrent transaction already holds an
@@ -107,7 +127,7 @@ begin
     insert into public.appointments
       (customer_name, customer_email, barber_id, service_id, start_time, end_time)
     values
-      (btrim(p_customer_name), lower(btrim(p_customer_email)),
+      (btrim(p_customer_name), v_email,
        p_barber_id, p_service_id, p_start_time, v_end)
     returning * into v_row;
   exception
