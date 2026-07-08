@@ -7,5 +7,4 @@ next-env.d.ts
 
 # env — never commit secrets
 .env
-.env.local
 .env*.local
