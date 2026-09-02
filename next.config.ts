@@ -1,24 +1,20 @@
 import type { NextConfig } from "next";
 
-/* Security headers. Kept to the pure-win set: clickjacking protection, MIME
-   sniffing off, HTTPS pinning, sane referrer. Deliberately no strict CSP —
-   it would need per-nonce wiring for Next/framer/three and risks breaking the
-   3D hero and animations for little gain on a no-auth marketing site.
-   Motion sensors (gyroscope/accelerometer) are left enabled — the hero uses
-   device-orientation. */
-const securityHeaders = [
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-];
+// ponytail: static export for GitHub Pages. Pages serves the repo at a
+// subpath (/durden-barbershop), so basePath/assetPrefix come from an env var
+// — empty in local dev, set in the deploy workflow. next/image needs
+// unoptimized under export. The previous async headers() is dropped: static
+// hosting can't set response headers, and Pages ignores them anyway. If this
+// ever moves to a Node host (Vercel), restore headers() there.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
-  },
+  output: "export",
+  basePath: basePath || undefined,
+  assetPrefix: basePath || undefined,
+  images: { unoptimized: true },
+  trailingSlash: true,
 };
 
 export default nextConfig;

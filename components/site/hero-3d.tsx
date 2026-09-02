@@ -14,6 +14,11 @@ import * as THREE from "three";
 
 const RIM_LIGHT = "#ffffff"; // ponytail: monochrome — was hazard orange
 
+// ponytail: basePath prefix so the static asset resolves under GitHub Pages'
+// /durden-barbershop subpath. Empty in local dev. next/link handles this
+// automatically, but a raw useFBX() string does not.
+const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/trimmer/base_basic_pbr.fbx`;
+
 /* Orientation fix for the imported model (radians). FBX up-axis / facing can
    differ from three's Y-up; tune here if the trimmer imports lying down. */
 const ORIENT: [number, number, number] = [0, 0, 0];
@@ -27,7 +32,7 @@ function TrimmerModel() {
 
   /* The PBR variant embeds its textures bound to the correct UVs, so we keep
      the FBX's own materials (a separate atlas + manual UVs did not line up). */
-  const fbx = useFBX("/models/trimmer/base_basic_pbr.fbx");
+  const fbx = useFBX(MODEL_URL);
 
   const model = useMemo(() => {
     const obj = fbx.clone(true);
@@ -119,7 +124,7 @@ function Rig() {
   );
 }
 
-useFBX.preload("/models/trimmer/base_basic_pbr.fbx");
+useFBX.preload(MODEL_URL);
 
 export function Hero3D() {
   return (

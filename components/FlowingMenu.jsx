@@ -3,6 +3,16 @@ import { gsap } from 'gsap';
 
 import './FlowingMenu.css';
 
+/**
+ * @param {object} props
+ * @param {{link?:string,text:string,image:string,onClick?:(id?:string)=>void}[]} [props.items]
+ * @param {number} [props.speed]
+ * @param {string} [props.textColor]
+ * @param {string} [props.bgColor]
+ * @param {string} [props.marqueeBgColor]
+ * @param {string} [props.marqueeTextColor]
+ * @param {string} [props.borderColor]
+ */
 function FlowingMenu({
   items = [],
   speed = 15,
